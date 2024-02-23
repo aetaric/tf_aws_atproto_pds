@@ -28,6 +28,26 @@ resource "aws_security_group_rule" "opened_to_alb" {
   security_group_id        = aws_security_group.pds.id
 }
 
+# an ebs volume to store our data
+resource "aws_ebs_volume" "data" {
+  availability_zone = aws_instance.pds.availability_zone
+  size = 100
+  type = "gp3"
+  tags = {
+    Name = "pds data vol"
+  }
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "aws_volume_attachment" "pds_data" {
+  device_name = "/dev/sdg"
+  volume_id = aws_ebs_volume.data.id
+  instance_id = aws_instance.pds.id
+  skip_destroy = true
+}
+
 # The PDS instance in EC2
 resource "aws_instance" "pds" {
   ami             = "ami-0fc5d935ebf8bc3bc"
@@ -44,6 +64,12 @@ echo "Installing requirements"
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - &&\
 sudo apt-get install -y nodejs git jq
 sudo npm install -g pnpm
+
+echo "Setting up data volume"
+sudo mkfs.ext4 /dev/nvme1n1
+sudo mkdir /pds
+sudo mount /dev/nvme1n1 /pds
+sudo sed -i -e '$a/dev/nvme1n1 /pds ext4 rw,relatime 0 0' /etc/fstab
 
 echo "cloning the pds repo"
 sudo git clone https://github.com/bluesky-social/pds /pds
