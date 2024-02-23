@@ -11,4 +11,4 @@
 `tofu plan` to get an idea of what changes will be made to your AWS account
 `tofu apply` applys the changes
 
-tofu/terraform will ask you for your domain name, IP you want to allow to ssh to the ec2 instance, and the ssh pubkey you want to use. You can optionally declare the admin password you want to use. If you do not set one, open will be randomly generated.
+tofu/terraform will ask you for your domain name, IP you want to allow to ssh to the ec2 instance, and the ssh pubkey you want to use. You can optionally declare the admin password you want to use. If you do not set one, one will be randomly generated.
