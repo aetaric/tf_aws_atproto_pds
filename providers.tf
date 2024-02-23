@@ -18,7 +18,7 @@
 #   description = "KV Version 2 secret engine mount"
 # }
 
-# # AWS nomercy Account details
+# # AWS Account details
 # data "vault_kv_secret_v2" "aws" {
 #   mount = vault_mount.kvv2.path
 #   name  = "path/to/secret"
